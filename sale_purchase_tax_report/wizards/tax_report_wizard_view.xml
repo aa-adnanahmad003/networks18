@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--        Wizard Form View-->
+        <record id="tax_report_id_wizard" model="ir.ui.view">
+            <field name="name">tax.report_id.wizard</field>
+            <field name="model">tax.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="partner_id"/>
+                            </group>
+                            <group>
+                                <field name="end_date"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="tax_parametric_report" type="object" class="oe_highlight"
+                                    string="Tax Report"/>
+                            <button name="cancel_tax_report" type="object" class="oe_highlight"
+                                    string="Cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--        Action-->
+        <record id="tax_wizard_action" model="ir.actions.act_window">
+            <field name="name">Tax Report</field>
+            <field name="res_model">tax.report</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!--                Menuitems-->
+
+        <menuitem id="custom_account_report_menu_id"
+                  name="Networks Pvt. Ltd. Custom Reports"
+                  parent="account.menu_finance_reports"
+                  sequence="0"
+        />
+        <menuitem id="tax_report_menu_id"
+                  name="Tax Report"
+                  parent="custom_account_report_menu_id"
+                  action="tax_wizard_action"
+                  sequence="5"
+        />
+
+    </data>
+</odoo>

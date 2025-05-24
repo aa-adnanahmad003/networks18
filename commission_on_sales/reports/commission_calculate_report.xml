@@ -1,0 +1,199 @@
+<odoo>
+
+    <template id="commission_calculate_template_id">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page" style="page-break-before:always;">
+                    <!--                        Header-->
+                    <div class="o_clean_header">
+                        <div class="row">
+                            <div class="col-2"/>
+                            <div class="col-8 text-center"
+                                 style="font-size:12px;font-family:'Roboto',sans-serif;">
+                                <ul class="list-unstyled">
+                                    <li t-if="res_company.name">
+                                        <h4>
+                                            <span t-field="res_company.name"/>
+                                        </h4>
+                                    </li>
+
+                                    <li t-if="res_company.street">
+                                        <span t-field="res_company.street"/>
+                                    </li>
+                                    <li t-if="res_company.street2">
+                                        <span t-field="res_company.street2"/>
+                                        <span t-field="res_company.city"/>
+                                    </li>
+                                    <li t-if="res_company.street2">
+                                        <span t-field="res_company.country_id.name"/>
+                                    </li>
+                                    <li t-if="res_company.phone">
+                                        <span t-field="res_company.phone"/>
+                                    </li>
+                                    <li t-if="res_company.email">
+                                        <span t-field="res_company.email"/>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-2 text-right">
+                                <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)"
+                                     alt="Logo"
+                                     style="width:110px;height:150px"/>
+                            </div>
+                        </div>
+                    </div>
+                    <!--                        Contant-->
+                    <div class="row text-center text-capitalize" style="margin-top:20px">
+                        <div class="col-12 text-dark">
+                            <h3>
+                                Commission Ledger Report
+                            </h3>
+                        </div>
+                    </div>
+                    <br/>
+                    <table class="table table-bordered table-sm">
+                        <thead class="text-center " style="background-color:#33bbff;">
+                            <tr>
+                                <th class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Invoice Date
+                                </th>
+                                <th class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Invoice No
+                                </th>
+                                <th class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Customer
+                                </th>
+                                <th class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Invoice Amount
+                                </th>
+                                <th class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Commission Type
+                                </th>
+                                <th class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Total Commission
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="from_date and to_date and commission_agent_id">
+                                <t t-set="read_grouped_data"
+                                   t-value="docs.read_group([('invoice_date', '&gt;=', from_date), ('invoice_date', '&lt;=', to_date), ('commission_agent_id', '=', commission_agent_id)], ['commission_agent_id'], ['commission_type', 'commission_agent_id'], lazy=False)"/>
+                            </t>
+                            <t t-elif="from_date and to_date and not commission_agent_id">
+                                <t t-set="read_grouped_data"
+                                   t-value="docs.read_group([('invoice_date', '&gt;=', from_date), ('invoice_date', '&lt;=', to_date)], ['commission_agent_id'], ['commission_type', 'commission_agent_id'], lazy=False)"/>
+                            </t>
+
+                            <t t-set="grand_total_commission" t-value="0"/>
+
+                            <t t-foreach="read_grouped_data" t-as="rg_data">
+                                <t t-set="filtered_data" t-value="docs.search(rg_data['__domain'])"/>
+                                <tr style="page-break-inside: avoid; adlgin:0px; font-size:15px; font-style:octarine; padding:0px;background-color:#ADD8E6;text-align:left; vertical-align: middle;">
+                                    <th class="text-dark text-capitalize" colspan="13">
+                                        Sales Agent :
+                                        <t t-esc="filtered_data['commission_agent_id'].user_id.name"/>
+                                    </th>
+                                </tr>
+                                <t t-set="subtotal_commission" t-value="0"/>
+
+                                <t t-foreach="filtered_data" t-as="o">
+                                    <tr>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.invoice_date"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.invoice_number"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.partner_id.name"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black; text-align:right;">
+                                            <span t-field="o.invoice_amount"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.commission_type"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black; text-align:right;">
+                                            <span t-field="o.total_commission"/>
+                                            <t t-set="subtotal_commission"
+                                               t-value="subtotal_commission+o.total_commission"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <tr>
+                                    <td colspan="5" style="border:1px solid black;text-align:center;">
+                                        <b>Total</b>
+                                    </td>
+                                    <td style="border:1px solid black;text-align:right;">
+                                        <b>
+                                            <t t-out="'{0:,.2f}'.format(subtotal_commission)"/>
+                                        </b>
+                                        <t t-set="grand_total_commission"
+                                           t-value="grand_total_commission+subtotal_commission"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-7" style="text-align:center;">
+                            <b>Grand Total Commission</b>
+                        </div>
+                        <div class="col-3" style="text-align:right;">
+                            <b>
+                                <t t-out="'{0:,.2f}'.format(grand_total_commission)"/>
+                            </b>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div style="text-align:center;">
+                        <b>
+                            (<t t-out="request.env.ref('base.PKR').amount_to_text(grand_total_commission)"/>)
+                        </b>
+                    </div>
+                </div>
+            </t>
+        </t>
+
+    </template>
+
+
+    <record id="commission_report_paper_format_id" model="report.paperformat">
+        <field name="name">Commission Calculation Paper Format</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">90</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="commission_calculate_report_id" model="ir.actions.report">
+        <field name="name">Commission Ledger Report</field>
+        <field name="model">commission.table</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">commission_on_sales.commission_calculate_template_id</field>
+        <field name="report_file">commission_on_sales.commission_calculate_template_id</field>
+        <field name="print_report_name">'Commission Calculate - %s' % (object.name).replace('/', '')</field>
+        <field name="binding_model_id" ref="commission_on_sales.model_commission_table"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="commission_on_sales.commission_report_paper_format_id"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="commission_wizard_id" model="ir.ui.view">
+            <field name="name">commission.wizard.id</field>
+            <field name="model">commission.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="from_date" required="1"/>
+                                <field name="commission_agent_id"/>
+                            </group>
+                            <group>
+                                <field name="to_date" required="1"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="commission_calculate_report" type="object" string="Print"
+                                    class="oe_highlight"/>
+                            <button name="cancel_report" type="object" class="oe_highlight"
+                                    string="Cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="commission_wizard_action" model="ir.actions.act_window">
+            <field name="name">Commission Report Wizard</field>
+            <field name="res_model">commission.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!--        Menuitems-->
+        <menuitem id="reporting_menu"
+                  name="Reporting"
+                  parent="commission_on_sales.commission_menu_id"
+                  sequence="10"/>
+
+        <menuitem id="commission_wizard_menu_id" name="Commission Report"
+                  parent="commission_on_sales.reporting_menu"
+                  action="commission_on_sales.commission_wizard_action"
+                  sequence="5"/>
+    </data>
+</odoo>

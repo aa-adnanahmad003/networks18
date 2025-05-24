@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_header">
+            <div class="header">
+                <div class="o_clean_header">
+                    <t t-foreach="docs" t-as="o">
+                        <div class="row" style="font-family:Octarine">
+                            <div class="col-3" style="margin-top:30px">
+                                <img t-att-src="image_data_uri(o.company_id.logo)" style="height:90px;width:110px;"/>
+                            </div>
+                            <div class="col-6 text-center" style="margin-top:30px">
+                                <h3>
+                                    <span t-esc="o.company_id.name"/>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-left" style="margin-top:20px; font-size:11px;margin-left:15px;">
+                                <span t-esc="o.company_id.street"/>
+                                <br/>
+                                <span t-esc="o.company_id.city"/>
+                                <br/>
+                                <span t-esc="o.company_id.country_id.name"/>
+                                <br/>
+                                Mobile#:
+                                <span t-esc="o.company_id.mobile"/>
+                                <br/>
+                                EMail:
+                                <span t-esc="o.company_id.email"/>
+                                <br/>
+                                Website:
+                                <span t-esc="o.company_id.website"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </template>
+
+        <template id="products_detail_template">
+            <t t-call="web.html_container">
+                <!--                <t t-call="networks_reports.report_header"/>-->
+                <t t-call="web.internal_layout">
+                    <div class="page" style="font-family:'Roboto',sans-serif;font-size:15px;">
+                        <div class="row">
+                            <div class="col-12 text-center" style="margin-top:45px;">
+                                <h4>
+                                    <b style="color:black">Products Detail Report<br/>(
+                                        <span t-esc="start_date"
+                                              t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                        -
+                                        <span t-esc="end_date"
+                                              t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                        )
+                                    </b>
+                                </h4>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm"
+                               style="margin-top:25px; font-size:15px;">
+                            <thead class="table text-white" style="background-color:#191970">
+                                <t t-set="sub_total_amount" t-value="0"/>
+                                <t t-set="total_amount" t-value="0"/>
+                                <tr class="font-weight-bold">
+                                    <!--                                    <td>-->
+                                    <!--                                        Sr #-->
+                                    <!--                                    </td>-->
+                                    <td style="width:90px" class="text-center">
+                                        Invoice No
+                                    </td>
+                                    <td class="text-center">
+                                        <t t-if="report_type=='out_invoice'">
+                                            Customer
+                                        </t>
+                                        <t t-else="">
+                                            Vendor
+                                        </t>
+
+                                    </td>
+                                    <td class="text-center">
+                                        Date
+                                    </td>
+                                    <td class="text-center">
+                                        Quantity
+                                    </td>
+                                    <td class="text-center">
+                                        Unit Price
+                                    </td>
+                                    <td class="text-center">
+                                        Total Amount
+                                    </td>
+                                </tr>
+                            </thead>
+                            <t t-set="count" t-value="1"/>
+                            <tbody>
+                                <t t-if="report_type == 'out_invoice'">
+                                    <t t-if="product_id">
+                                        <t t-set="read_grouped_data"
+                                           t-value="docs.read_group([('date', '&gt;=', start_date), ('date', '&lt;=', end_date), ('parent_state', '=', 'posted'), ('move_type', '=', 'out_invoice'),('product_id', '!=', False), ('product_id', '=', product_id)], ['product_id'], ['product_id'], lazy=False)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="read_grouped_data"
+                                           t-value="docs.read_group([('date', '&gt;=', start_date), ('date', '&lt;=', end_date), ('parent_state', '=', 'posted'), ('move_type', '=', 'out_invoice'),('product_id', '!=', False)], ['product_id'], ['product_id'], lazy=False)"/>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <t t-if="product_id">
+                                        <t t-set="read_grouped_data"
+                                           t-value="docs.read_group([('date', '&gt;=', start_date), ('date', '&lt;=', end_date), ('parent_state', '=', 'posted'), ('move_type', '=', 'in_invoice'),('product_id', '!=', False), ('product_id', '=', product_id)], ['product_id'], ['product_id'], lazy=False)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="read_grouped_data"
+                                           t-value="docs.read_group([('date', '&gt;=', start_date), ('date', '&lt;=', end_date), ('parent_state', '=', 'posted'), ('move_type', '=', 'in_invoice'),('product_id', '!=', False)], ['product_id'], ['product_id'], lazy=False)"/>
+                                    </t>
+                                </t>
+                                <t t-foreach="read_grouped_data" t-as="rg_data">
+                                    <t t-set="filtered_data" t-value="docs.search(rg_data['__domain'])"/>
+                                    <tr style="page-break-inside: avoid; adlgin:0px; font-size:15px; font-style:octarine; padding:0px;background-color:#ADD8E6;text-align:left; height:20px;">
+                                        <th class="text-capitalize text-dark" colspan="13">
+                                            <b>
+                                                <t t-esc="filtered_data['product_id'].name"/>
+                                            </b>
+                                        </th>
+                                    </tr>
+
+                                    <t t-foreach="filtered_data" t-as="o">
+                                        <tr>
+                                            <!--                                            <td class="text-right">-->
+                                            <!--                                                <span t-esc="count"/>-->
+                                            <!--                                                <t t-set="count" t-value="count+1"/>-->
+                                            <!--                                            </td>-->
+                                            <td>
+                                                <span t-esc="o.move_name"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="o.partner_id.name"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="o.date.strftime('%d-%m-%Y')"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="o.quantity"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="'{0:,.2f}'.format(o.price_unit)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="'{0:,.2f}'.format(o.price_subtotal)"/>
+                                                <t t-set="sub_total_amount"
+                                                   t-value="sub_total_amount+o.price_subtotal"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr style="page-break-inside: avoid; adlgin:0px; font-size:15px; font-style:octarine; padding:0px;text-align:left;">
+                                        <td colspan="3" class="text-center">
+                                            <b><span t-field="o.product_id.name"/>'s Total
+                                            </b>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-capitalize text-right">
+                                            <b>
+                                                <span t-esc="'{0:,.2f}'.format(sub_total_amount)"/>
+                                            </b>
+                                            <t t-set="total_amount"
+                                               t-value="total_amount+sub_total_amount"/>
+                                        </td>
+                                        <t t-set="sub_total_amount"
+                                           t-value="0"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-2"></div>
+                            <div class="col-7" style="text-align:center;">
+                                <b>Grand Total</b>
+                            </div>
+                            <div class="col-3" style="text-align:right;margin-left:-20px;">
+                                <b>
+                                    <t t-out="'{0:,.2f}'.format(total_amount)"/>
+                                </b>
+                            </div>
+                        </div>
+                        <br/>
+                        <br/>
+                        <div style="text-align:center;">
+                            <b>
+                                (<t t-out="request.env.ref('base.PKR').amount_to_text(total_amount)"/>)
+                            </b>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+    <record id="product_detail_paperformat" model="report.paperformat">
+        <field name="name">Customized Paper Format</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">25</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="True"/>
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="products_detail_report_id" model="ir.actions.report">
+        <field name="name">Products Detail Report</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">networks_reports.products_detail_template</field>
+        <field name="report_file">networks_reports.products_detail_template</field>
+        <field name="print_report_name">'Products Detail Report - %s' % (object.name).replace('/', '')</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="networks_reports.product_detail_paperformat"/>
+    </record>
+
+
+</odoo>

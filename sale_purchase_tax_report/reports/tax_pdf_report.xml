@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="invoice_tax_header">
+            <div class="header">
+                <div class="o_clean_header">
+                    <t t-foreach="docs_sale[-1]" t-as="o">
+                        <div class="row" style="font-family:Octarine">
+                            <div class="col-3" style="margin-top:30px">
+                                <img t-att-src="image_data_uri(o.company_id.logo)" style="height:90px;width:110px;"/>
+                            </div>
+                            <div class="col-6 text-center" style="margin-top:30px">
+                                <h3>
+                                    <span t-esc="o.company_id.name"/>
+                                </h3>
+                            </div>
+                            <div class="col-3 text-left" style="margin-top:20px; font-size:11px;margin-left:15px;">
+                                <span t-esc="o.company_id.street"/>
+                                <br/>
+                                <span t-esc="o.company_id.city"/>
+                                <br/>
+                                <span t-esc="o.company_id.country_id.name"/>
+                                <br/>
+                                Mobile#:
+                                <span t-esc="o.company_id.mobile"/>
+                                <br/>
+                                EMail:
+                                <span t-esc="o.company_id.email"/>
+                                <br/>
+                                Website:
+                                <span t-esc="o.company_id.website"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </template>
+
+        <template id="tax_report_template">
+            <t t-call="web.html_container">
+                <t t-call="sale_purchase_tax_report.invoice_tax_header"/>
+                <t t-call="web.internal_layout">
+                    <div class="page" style="font-family:'Roboto',sans-serif;font-size:15px;">
+                        <div class="row">
+                            <div class="col-12 text-center" style="margin-top:45px;">
+                                <h4>
+                                    <b style="color:black">Tax Report<br/>(
+                                        <span t-esc="start_date"
+                                              t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                        -
+                                        <span t-esc="end_date"
+                                              t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                        )
+                                    </b>
+                                </h4>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm"
+                               style="margin-top:25px; font-size:15px;">
+                            <thead class="table text-white" style="background-color:#191970">
+                                <tr class="font-weight-bold">
+                                    <td>
+                                        Sr #
+                                    </td>
+                                    <td style="width:90px" class="text-center">
+                                        Date
+                                    </td>
+                                    <td class="text-center">
+                                        Document No
+                                    </td>
+                                    <td class="text-center">
+                                        Document Type
+                                    </td>
+                                    <td class="text-center">
+                                        Partner
+                                    </td>
+                                    <td class="text-center">
+                                        Partner Tax ID
+                                    </td>
+                                    <td class="text-center">
+                                        Tax 19.5 %
+                                    </td>
+                                    <td class="text-center">
+                                        Tax 15 %
+                                    </td>
+                                    <td class="text-center">
+                                        Base Amount
+                                    </td>
+                                    <td class="text-center">
+                                        Tax Amount
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td colspan="10"
+                                    style="background-color:lightgray; color:black; border-bottom: double; border-top: double;">
+                                    <b>Sales</b>
+                                </td>
+                            </tr>
+                            <t t-set="total_tax_sale" t-value="0"/>
+                            <t t-set="total_tax_purchase" t-value="0"/>
+                            <t t-set="total_amount_sale" t-value="0"/>
+                            <t t-set="total_amount_purchase" t-value="0"/>
+                            <t t-set="count_sale" t-value="1"/>
+                            <t t-set="count_purchase" t-value="1"/>
+                            <t t-set="currency_name" t-value="currency"/>
+                            <t t-set="tax19_5" t-value="0"/>
+                            <t t-set="tax15" t-value="0"/>
+                            <t t-set="purchase_tax" t-value="0"/>
+                            <tbody>
+                                <tr t-foreach="docs_sale" t-as="o">
+                                    <t t-set="currency_name" t-value="currency"/>
+                                    <td class="text-right">
+                                        <span t-esc="count_sale"/>
+                                        <t t-set="count_sale" t-value="count_sale+1"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.invoice_date">
+                                            <span t-esc="o.invoice_date.strftime('%d-%m-%Y')"/>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.journal_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.partner_id.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="o.partner_id.vat"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="o.currency_id.name"/>
+                                        <br/>
+                                        <span t-esc="'%.2f'% (o.amount_untaxed_signed*19.5/100)"/>
+                                        <t t-set="tax19_5" t-value="tax19_5+(o.amount_untaxed_signed*19.5/100)"/>
+                                        <!--                                        <t t-foreach="o.invoice_line_ids.tax_ids.ids" t-as="tax_id">-->
+                                        <!--                                            <span t-esc="request.env['account.tax'].search([('id', '=', tax_id)]).name"/>-->
+                                        <!--                                            <br/>-->
+                                        <!--                                        </t>-->
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="o.currency_id.name"/>
+                                        <br/>
+                                        <span t-esc="'%.2f'% (((o.amount_untaxed_signed)+(o.amount_untaxed_signed*19.5/100))*15/100)"/>
+                                        <t t-set="tax15" t-value="tax15+((o.amount_untaxed_signed)+(o.amount_untaxed_signed*19.5/100))*15/100"/>
+                                        <!--                                        <t t-foreach="o.invoice_line_ids.tax_ids.ids" t-as="tax_id">-->
+                                        <!--                                            <span t-esc="o.currency_id.name"/>-->
+                                        <!--                                            <span t-esc="'%.2f'% (o.amount_untaxed/100*(request.env['account.tax'].search([('id', '=', tax_id)]).amount))"/>-->
+                                        <!--                                            <br/>-->
+                                        <!--                                        </t>-->
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="o.currency_id.name"/>
+                                        <span t-esc="o.amount_untaxed"/>
+                                        <t t-set="total_amount_sale" t-value="total_amount_sale+(o.amount_untaxed)"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="o.currency_id.name"/>
+                                        <span t-esc="o.amount_tax_signed"/>
+                                        <t t-set="total_tax_sale" t-value="total_tax_sale+(o.amount_tax_signed)"/>
+                                        <t t-set="currency_name" t-value="o.currency_id.name"/>  <!--Currency Nmae  -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="text-left">
+                                        <b>
+                                            <span>Total for Sales</span>
+                                        </b>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% tax19_5"/>
+                                            </b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% tax15"/>
+                                            </b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% total_amount_sale"/>
+                                            </b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% total_tax_sale"/>
+                                            </b>
+                                        </td>
+                                    </td>
+                                </tr>
+                                <hr/>
+                                <tr>
+                                    <td colspan="10"
+                                        style="background-color:lightgray; color:black; border-bottom: double; border-top: double;">
+                                        <b>Purchase</b>
+                                    </td>
+                                </tr>
+                                <thead class="table text-white" style="background-color:#191970">
+                                    <tr class="font-weight-bold">
+                                        <td>
+                                            Sr #
+                                        </td>
+                                        <td style="width:90px" class="text-center">
+                                            Date
+                                        </td>
+                                        <td class="text-center">
+                                            Document No
+                                        </td>
+                                        <td class="text-center">
+                                            Document Type
+                                        </td>
+                                        <td class="text-center">
+                                            Partner
+                                        </td>
+                                        <td class="text-center">
+                                            Partner Tax ID
+                                        </td>
+                                        <td class="text-center">
+                                            Tax %
+                                        </td>
+                                        <td class="text-center">
+                                            Taxwise Amount
+                                        </td>
+                                        <td class="text-center">
+                                            Base Amount
+                                        </td>
+                                        <td class="text-center">
+                                            Tax Amount
+                                        </td>
+                                    </tr>
+                                </thead>
+
+                                <tr t-foreach="docs_purchase" t-as="o">
+                                    <t t-set="currency_name" t-value="currency"/>
+                                    <td class="text-right">
+                                        <span t-esc="count_purchase"/>
+                                        <t t-set="count_purchase" t-value="count_purchase+1"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.invoice_date">
+                                            <span t-esc="o.invoice_date.strftime('%d-%m-%Y')"/>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.journal_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.partner_id.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="o.partner_id.vat"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-foreach="o.invoice_line_ids.tax_ids.ids" t-as="tax_id">
+                                            <span t-esc="request.env['account.tax'].search([('id', '=', tax_id)]).name"/>
+                                            <br/>
+                                            <t t-set="purchase_tax"
+                                               t-value="purchase_tax+(o.amount_untaxed/100*(request.env['account.tax'].search([('id', '=', tax_id)]).amount))"/>
+                                        </t>
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-foreach="o.invoice_line_ids.tax_ids.ids" t-as="tax_id">
+                                            <span t-esc="o.currency_id.name"/>
+                                            <span t-esc="'%.2f'% (o.amount_untaxed/100*(request.env['account.tax'].search([('id', '=', tax_id)]).amount))"/>
+                                            <!--                                            <span t-esc="'%.2f'% (o.rounded_total/100*(request.env['account.tax'].search([('id', '=', tax_id)]).amount))"/>-->
+                                            <br/>
+                                        </t>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="o.currency_id.name"/>
+                                        <span t-esc="o.amount_untaxed"/>
+                                        <t t-set="total_amount_purchase"
+                                           t-value="total_amount_purchase+(o.amount_untaxed)"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="o.currency_id.name"/>
+                                        <span t-esc="-(o.amount_tax_signed)"/>
+                                        <t t-set="total_tax_purchase"
+                                           t-value="total_tax_purchase+(o.amount_tax_signed)"/>
+                                        <t t-set="currency_name" t-value="o.currency_id.name"/>  <!--Currency Nmae  -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7" class="text-left">
+                                        <b>
+                                            <span>Total for Purchase</span>
+                                        </b>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% purchase_tax"/>
+                                            </b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% total_amount_purchase"/>
+                                            </b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b>
+                                                <span t-esc="currency_name"/>
+                                                <span t-esc="'%.2f'% -total_tax_purchase"/>
+                                            </b>
+                                        </td>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+    <record id="tax_report_paper_format_id" model="report.paperformat">
+        <field name="name">Customized Paper Format</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">25</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="True"/>
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="tax_pdf_report_id" model="ir.actions.report">
+        <field name="name">Tax Report</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sale_purchase_tax_report.tax_report_template</field>
+        <field name="report_file">sale_purchase_tax_report.tax_report_template</field>
+        <field name="print_report_name">'Tax Report - %s' % (object.name).replace('/', '')</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="sale_purchase_tax_report.tax_report_paper_format_id"/>
+    </record>
+
+
+</odoo>
+
+
+        <!--                                                                    <tr>-->
+        <!--                                                                        <td colspan="4" class="text-center">-->
+        <!--                                                                            &lt;!&ndash;                                            <span>&ndash;&gt;-->
+        <!--                                                                            &lt;!&ndash;                                                <b>Total</b>&ndash;&gt;-->
+        <!--                                                                            &lt;!&ndash;                                            </span>&ndash;&gt;-->
+        <!--                                                                        </td>-->
+        <!--                                                                        <td></td>-->
+        <!--                                                                        <td class="text-right">-->
+        <!--                                                                            <b>-->
+        <!--                                                                                &lt;!&ndash;                                                <span t-esc="'{0:,.2f}'.format(total_unit_price)"/>&ndash;&gt;-->
+        <!--                                                                            </b>-->
+        <!--                                                                        </td>-->
+        <!--                                                                        <td></td>-->
+        <!--                                                                        <td class="text-right">-->
+        <!--                                                                            &lt;!&ndash;                                            <b>&ndash;&gt;-->
+        <!--                                                                            &lt;!&ndash;                                                <span t-esc="'{0:,.2f}'.format(t_tax)"/>&ndash;&gt;-->
+        <!--                                                                            &lt;!&ndash;                                            </b>&ndash;&gt;-->
+        <!--                                                                        </td>-->
+        <!--                                                                        <td class="text-right">-->
+        <!--                                                                            &lt;!&ndash;                                            <b>&ndash;&gt;-->
+        <!--                                                                            &lt;!&ndash;                                                <span t-esc="'{0:,.2f}'.format(p_total)"/>&ndash;&gt;-->
+        <!--                                                                            &lt;!&ndash;                                            </b>&ndash;&gt;-->
+        <!--                                                                        </td>-->
+        <!--                                                                    </tr>-->
+        <!--                                                                    <tr>-->
+        <!--                                                                        <td colspan="4" class="text-center">-->
+        <!--                                                                            <b>Total With Sales Tax</b>-->
+        <!--                                                                        </td>-->
+        <!--                                                                        &lt;!&ndash;                                        <td></td>&ndash;&gt;-->
+        <!--                                                                        &lt;!&ndash;                                        <td></td>&ndash;&gt;-->
+        <!--                                                                        &lt;!&ndash;                                        <td></td>&ndash;&gt;-->
+        <!--                                                                        <td colspan="5" class="text-center">-->
+        <!--                                                                            <b>-->
+        <!--                                                                                <span t-esc="'{0:,.2f}'.format(t_tax+p_total)"/>-->
+        <!--                                                                            </b>-->
+        <!--                                                                        </td>-->
+        <!--                                                                    </tr>-->

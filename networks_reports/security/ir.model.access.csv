@@ -1,0 +1,3 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+acl_products_detail,products.detail,model_products_detail,,1,1,1,1
+acl_customer_statement,customer.statement,model_customer_statement,,1,1,1,1

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="commission_settlement_tree_view_id" model="ir.ui.view">
+            <field name="name">commission.settlement.tree.view.id</field>
+            <field name="model">commission.settlement</field>
+            <field name="arch" type="xml">
+                <list string="Commission Settelment">
+                    <field name="commission_agent_id"/>
+                    <field name="commission_date"/>
+                    <field name="commission_type"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="commission_settlement_form_view_id" model="ir.ui.view">
+            <field name="name">commission.settlement.form.view.id</field>
+            <field name="model">commission.settlement</field>
+            <field name="arch" type="xml">
+                <form string="Commission Settlement">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="commission_agent_id" required="1"/>
+                                <field name="commission_type" required="1"/>
+                            </group>
+                            <group>
+                                <field name="commission_date"/>
+                                <field name="percentage"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Commissions" name="set_commission">
+                                <field name="commission_settlement_ids">
+                                    <list string="Set Commissions" editable="bottom">
+                                        <field name="partner_id"/>
+                                        <field name="fixed_amount"/>
+<!--                                        <field name="percentage"/>-->
+                                        <field name="commission_settlement_id" invisible="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="commission_settlement_action_id" model="ir.actions.act_window">
+            <field name="name">Commission Settlement</field>
+            <field name="res_model">commission.settlement</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new work location
+                </p>
+            </field>
+        </record>
+
+
+<!--        <menuitem id="commission_settlement_menu_id" name="Commission Settlement"-->
+<!--                  parent="commission_on_sales.configuration_menu"-->
+<!--                  action="commission_on_sales.commission_settlement_action_id"-->
+<!--                  sequence="5"/>-->
+    </data>
+</odoo>

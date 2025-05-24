@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="commission_table_tree_view_id" model="ir.ui.view">
+            <field name="name">commission.table.tree.view.id</field>
+            <field name="model">commission.table</field>
+            <field name="arch" type="xml">
+                <list string="Commission Table" editable="bottom" multi_edit="1">
+                    <field name="invoice_date" readonly="1"/>
+                    <field name="invoice_number" readonly="1"/>
+                    <field name="commission_agent_id" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="invoice_amount" readonly="1"/>
+                    <field name="commission_type" readonly="1"/>
+                    <field name="total_commission" readonly="1"/>
+                    <field name="move_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="commission_table_action_id" model="ir.actions.act_window">
+            <field name="name">Commission Table</field>
+            <field name="res_model">commission.table</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new work location
+                </p>
+            </field>
+        </record>
+        <!--    Menu for Commission Settlement-->
+        <menuitem id="configuration_menu"
+                  name="Configuration"
+                  parent="commission_on_sales.commission_menu_id"
+                  sequence="15"/>
+
+        <menuitem id="commission_table_menu_id" name="Commission Table"
+                  parent="commission_on_sales.configuration_menu"
+                  action="commission_on_sales.commission_table_action_id"
+                  sequence="3"/>
+    </data>
+</odoo>

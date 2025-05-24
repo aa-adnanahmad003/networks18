@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="customer_statement_id_wizard" model="ir.ui.view">
+            <field name="name">customer.statement.id.wizard</field>
+            <field name="model">customer.statement</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="from_date" required="1"/>
+                                <field name="partner_id" options="{'no_open': True, 'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="to_date" required="1"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="customer_statement_report" type="object" string="Customer Statement"
+                                    class="oe_highlight"/>
+                            <button name="cancel_customer_statement_report" type="object" class="oe_highlight"
+                                    string="Cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="customer_statement_wizard_action" model="ir.actions.act_window">
+            <field name="name">Customers Statement Report</field>
+            <field name="res_model">customer.statement</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!--        Menuitems-->
+        <menuitem id="customer_statement_sub_menuitem_id"
+                  name="Customers Statement"
+                  parent="sale_purchase_tax_report.custom_account_report_menu_id"
+                  action="customer_statement_wizard_action"
+                  sequence="10"/>
+    </data>
+</odoo>

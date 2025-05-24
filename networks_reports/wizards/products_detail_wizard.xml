@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--        Wizard Form View-->
+        <record id="products_detail_id_wizard" model="ir.ui.view">
+            <field name="name">products.detail.id.wizard</field>
+            <field name="model">products.detail</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="report_type"/>
+                            </group>
+                            <group>
+                                <field name="end_date"/>
+                                <field name="product_id"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="products_detail_report" type="object" class="oe_highlight"
+                                    string="Print"/>
+                            <button name="cancel_report" type="object" class="oe_highlight"
+                                    string="Cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--        Action-->
+        <record id="products_detail_action" model="ir.actions.act_window">
+            <field name="name">Products Detail Report</field>
+            <field name="res_model">products.detail</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!--                Menuitems-->
+
+        <menuitem id="tax_report_menu_id"
+                  name="Products Detail Report"
+                  parent="sale_purchase_tax_report.custom_account_report_menu_id"
+                  action="products_detail_action"
+                  sequence="15"
+        />
+
+    </data>
+</odoo>

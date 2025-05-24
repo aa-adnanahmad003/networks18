@@ -1,0 +1,218 @@
+<odoo>
+
+    <template id="customer_statement_template">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page" style="page-break-before:always;">
+                    <!--                        Header-->
+                    <div class="o_clean_header">
+                        <div class="row">
+                            <div class="col-2"/>
+                            <div class="col-8 text-center"
+                                 style="font-size:12px;font-family:'Roboto',sans-serif;">
+                                <ul class="list-unstyled">
+                                    <li t-if="res_company.name">
+                                        <h4>
+                                            <span t-field="res_company.name"/>
+                                        </h4>
+                                    </li>
+
+                                    <li t-if="res_company.street">
+                                        <span t-field="res_company.street"/>
+                                    </li>
+                                    <li t-if="res_company.street2">
+                                        <span t-field="res_company.street2"/>
+                                        <span t-field="res_company.city"/>
+                                    </li>
+                                    <li t-if="res_company.street2">
+                                        <span t-field="res_company.country_id.name"/>
+                                    </li>
+                                    <li t-if="res_company.phone">
+                                        <span t-field="res_company.phone"/>
+                                    </li>
+                                    <li t-if="res_company.email">
+                                        <span t-field="res_company.email"/>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-2 text-right">
+                                <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)"
+                                     alt="Logo"
+                                     style="width:110px;height:150px"/>
+                            </div>
+                        </div>
+                    </div>
+                    <!--                        Contant-->
+                    <div class="row text-center text-capitalize" style="margin-top:20px">
+                        <div class="col-12 text-dark">
+                            <h3>
+                                Customer Statement
+                            </h3>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-sm">
+                        <thead class="text-center" style="background-color:DodgerBlue;">
+                            <tr>
+                                <th class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Invoice #
+                                </th>
+                                <th class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Invoice Date
+                                </th>
+                                <th class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Due Date
+                                </th>
+                                <th class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Total Amount
+                                </th>
+                                <th class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Paid Amount
+                                </th>
+                                <th class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle;">
+                                    Amount Due
+                                </th>
+                            </tr>
+                        </thead>
+                        <t t-set="sub_total_amount" t-value="0"/>
+                        <t t-set="sub_paid_amount" t-value="0"/>
+                        <t t-set="sub_due_amount" t-value="0"/>
+
+                        <t t-set="total_amount" t-value="0"/>
+                        <t t-set="paid_amount" t-value="0"/>
+                        <t t-set="due_amount" t-value="0"/>
+                        <tbody>
+                            <t t-if="from_date and to_date and partner_id">
+                                <t t-set="read_grouped_data"
+                                   t-value="docs.read_group([('invoice_date', '&gt;=', from_date), ('invoice_date', '&lt;=', to_date), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice')], ['partner_id'], ['partner_id'], lazy=False)"/>
+                            </t>
+                            <t t-elif="from_date and to_date">
+                                <t t-set="read_grouped_data"
+                                   t-value="docs.read_group([('invoice_date', '&gt;=', from_date), ('invoice_date', '&lt;=', to_date), ('move_type', '=', 'out_invoice')], ['partner_id'], ['partner_id'], lazy=False)"/>
+                            </t>
+                            <t t-foreach="read_grouped_data" t-as="rg_data">
+                                <t t-set="filtered_data" t-value="docs.search(rg_data['__domain'])"/>
+                                <tr style="page-break-inside: avoid; adlgin:0px; font-size:15px; font-style:octarine; padding:0px;background-color:#ADD8E6;text-align:left;">
+                                    <th class="text-capitalize text-dark" colspan="13" style="border:1px solid black;">
+                                        <b>
+                                            <t t-esc="filtered_data['partner_id'].name"/>
+                                        </b>
+                                    </th>
+                                </tr>
+
+                                <t t-foreach="filtered_data" t-as="o">
+                                    <tr>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.name"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.invoice_date"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.invoice_date_due"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.amount_untaxed"/>
+                                            <t t-set="total_amount" t-value="total_amount+o.amount_untaxed"/>
+                                            <t t-set="sub_total_amount" t-value="sub_total_amount+o.amount_untaxed"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-esc="(o.amount_untaxed)-(o.amount_residual)"/>
+                                            <t t-set="paid_amount"
+                                               t-value="paid_amount+((o.amount_untaxed)-(o.amount_residual))"/>
+                                            <t t-set="sub_paid_amount"
+                                               t-value="sub_paid_amount+((o.amount_untaxed)-(o.amount_residual))"/>
+                                        </td>
+                                        <td style="background-color:white;color:black;border:1px solid black;">
+                                            <span t-field="o.amount_residual"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr style="page-break-inside: avoid; adlgin:0px; font-size:15px; font-style:octarine; padding:0px;text-align:left;">
+                                    <td colspan="3" class="text-center">
+                                        <b><span t-field="o.partner_id.name"/>'s Total</b>
+<!--                                        <b>Customer Total</b>-->
+                                    </td>
+                                    <td class="text-capitalize">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(sub_total_amount)"/>
+                                        </b>
+                                    </td>
+                                    <td class="text-capitalize">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(sub_paid_amount)"/>
+                                        </b>
+                                    </td>
+                                    <td class="text-capitalize">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(sub_total_amount-sub_paid_amount)"/>
+                                            <t t-set="sub_total_amount" t-value="0"/>
+                                            <t t-set="sub_paid_amount" t-value="0"/>
+                                        </b>
+                                    </td>
+                                </tr>
+                                <tr style="height:14px;"><td/><td/><td/><td/><td/><td/></tr>
+                            </t>
+                            <tr>
+                                <td colspan="3" class="text-center text-white text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle; background-color:DodgerBlue;">
+                                    Total
+                                </td>
+                                <td class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle; background-color:DodgerBlue;">
+                                    <span t-esc="'{0:,.2f}'.format(total_amount)"/>
+                                </td>
+                                <td class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle; background-color:DodgerBlue;">
+                                    <span t-esc="'{0:,.2f}'.format(paid_amount)"/>
+                                </td>
+                                <td class="text-center text-dark text-capitalize"
+                                    style="border:1px solid black; vertical-align: middle; background-color:DodgerBlue;">
+                                    <span t-esc="'{0:,.2f}'.format(total_amount-paid_amount)"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </t>
+        </t>
+
+    </template>
+
+    <record id="customer_statement_paperformat_id" model="report.paperformat">
+        <field name="name">Customer Statement</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">90</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="customer_statement_report_id" model="ir.actions.report">
+        <field name="name">Customer Statement</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">networks_reports.customer_statement_template</field>
+        <field name="report_file">networks_reports.customer_statement_template</field>
+        <field name="print_report_name">'Customer Report - %s' % (object.name).replace('/', '')</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="networks_reports.customer_statement_paperformat_id"/>
+    </record>
+
+</odoo>

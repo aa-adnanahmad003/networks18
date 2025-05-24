@@ -1,0 +1,5 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+acl_commission_agent,commission.agent,model_commission_agent,,1,1,1,1
+acl_commission_table,commission.table,model_commission_table,,1,1,1,1
+
+acl_commission_wizard,commission.wizard,model_commission_wizard,,1,1,1,1

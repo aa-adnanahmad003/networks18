@@ -59,34 +59,34 @@
                                style="margin-top:25px; font-size:15px;">
                             <thead class="table text-white" style="background-color:#191970">
                                 <tr class="font-weight-bold">
-                                    <td>
+                                    <td style="color: white;">
                                         Sr #
                                     </td>
-                                    <td style="width:90px" class="text-center">
+                                    <td style="color: white; width:90px" class="text-center">
                                         Date
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Document No
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Document Type
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Partner
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Partner Tax ID
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Tax 19.5 %
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Tax 15 %
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Base Amount
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="color: white;">
                                         Tax Amount
                                     </td>
                                 </tr>
@@ -204,34 +204,34 @@
                                 </tr>
                                 <thead class="table text-white" style="background-color:#191970">
                                     <tr class="font-weight-bold">
-                                        <td>
+                                        <td style="color: white;">
                                             Sr #
                                         </td>
-                                        <td style="width:90px" class="text-center">
+                                        <td style="color:white; width:90px" class="text-center">
                                             Date
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Document No
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Document Type
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Partner
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Partner Tax ID
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Tax %
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Taxwise Amount
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Base Amount
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="color: white;">
                                             Tax Amount
                                         </td>
                                     </tr>

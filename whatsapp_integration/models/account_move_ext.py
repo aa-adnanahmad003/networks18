@@ -115,7 +115,7 @@ class AccountMoveExt(models.Model):
 
             try:
                 # POST request to send the PDF document
-                with open(f'/home/adnan/odoo18/env/odoo18/addons/networks/whatsapp_integration/temp_invoices/{self.name.replace("/", "-")}.pdf', 'rb') as file:
+                with open(f'/home/adnan/odoo18/env/odoo18/addons/networks18/whatsapp_integration/temp_invoices/{self.name.replace("/", "-")}.pdf', 'rb') as file:
                     files = [('document_file', ('invoice.pdf', file, 'application/pdf'))]
 
                     # TODO: POST request for PDF file
@@ -247,7 +247,7 @@ class AccountMoveExt(models.Model):
             attachment_id = self.create_attachment('account.account_invoices', f'{self.name.replace("/", "-")}.pdf')
 
             # Specify the custom server-side folder where you want to save the file
-            custom_folder_path = '/home/adnan/odoo18/env/odoo18/addons/networks/whatsapp_integration/temp_invoices'
+            custom_folder_path = '/home/adnan/odoo18/env/odoo18/addons/networks18/whatsapp_integration/temp_invoices'
 
             # Save the attachment to the custom folder
             self.save_attachment_to_folder(attachment_id, custom_folder_path)

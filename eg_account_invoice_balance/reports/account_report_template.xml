@@ -1,34 +1,13 @@
 <odoo>
     <template id="report_invoice_document_for_customer_credit" inherit_id="account.report_invoice_document">
-        <xpath expr="//div[2]/div[@class='page']/p" position="before">
+        <xpath expr="//div[@id='informations']/div[2]" position="after">
             <t t-if="o.move_type in ['out_invoice', 'out_refund']">
-                <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6">
-                        <tr class="border-black fw-bold">
-                            <td>
-                                <b>Customer Dues:</b>
-                            </td>
-                            <td class="text-end">
-                                <b>
-                                    <span t-field="o.customer_credit"/>
-                                </b>
-                            </td>
-                        </tr>
-                    </div>
+                <div class="col" t-if="o.invoice_date_due and o.move_type == 'out_invoice' and o.state == 'posted'"
+                     name="due_date">
+                    <strong>Customer Due</strong>
+                    <span t-field="o.customer_credit"/>
                 </div>
             </t>
         </xpath>
-        <!--        Use one xpath above or below-->
-        <!--        <xpath expr="//div[@id='total']/div/table/t[3]/t/t[3]/tr" position="after">-->
-        <!--            <t t-if="o.move_type in ['out_invoice', 'out_refund']">-->
-        <!--                <tr class="border-black fw-bold">-->
-        <!--                    <td>Customer Dues:</td>-->
-        <!--                    <td class="text-end">-->
-        <!--                        <span t-field="o.customer_credit"/>-->
-        <!--                    </td>-->
-        <!--                </tr>-->
-        <!--            </t>-->
-        <!--        </xpath>-->
     </template>
 </odoo>

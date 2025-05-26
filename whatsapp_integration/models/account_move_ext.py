@@ -242,7 +242,7 @@ class AccountMoveExt(models.Model):
         # Call super to handle the standard Odoo process
         res = super(AccountMoveExt, self).action_post()
 
-        if self:
+        if self and self.move_type != 'entry':
             # Create the PDF attachment
             attachment_id = self.create_attachment('account.account_invoices', f'{self.name.replace("/", "-")}.pdf')
 

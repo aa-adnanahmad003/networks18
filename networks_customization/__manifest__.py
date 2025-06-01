@@ -12,13 +12,14 @@
     'version': '18.0.1.0.0',
     'license': 'LGPL-3',
     # Dependencies
-    'depends': ['base', 'account', 'contacts', 'stock_delivery'],
+    'depends': ['base', 'account', 'contacts'],
 
     # Views
     'data': [
         # 'security/ir.model.access.csv',
         # 'views/res_partner_ext.xml',
         'views/account_move_ext.xml',
+        'views/product_template_ext.xml',
         'reports/account_move_ext.xml',
     ],
 

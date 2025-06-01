@@ -1,0 +1,15 @@
+<!-- views/report_invoice_hs_code.xml -->
+<odoo>
+    <template id="report_invoice_document_inherit_id" inherit_id="account.report_invoice_document">
+        <xpath expr="//thead/tr/th[1]" position="after">
+            <th>HS Code</th>
+        </xpath>
+
+        <xpath expr="//td[@name='account_invoice_line_name']" position="after">
+            <!--        <xpath expr="//tbody/t/tr/t[1]/td[1]" position="after">-->
+            <td>
+                <span t-field="line.hs_code"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>

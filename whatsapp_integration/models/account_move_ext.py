@@ -66,8 +66,8 @@ class AccountMoveExt(models.Model):
     def _send_whatsapp_message(self, attachment_id):
         # WhatsApp API details
         url = "https://watilio.com/api/send/whatsapp"
-        secret = '0d9a5bb8f95f651bee036d791c60b98f112473ed'
-        account = '17133499396c8349cc7260ae62e3b1396831a8398f661fa533a0506'
+        secret = '49fb011a496611017550c3ebd1da1f2e3abedf06'
+        account = '17552525616c8349cc7260ae62e3b1396831a8398f689f07513a81e'
         mobile = self.partner_id.mobile
 
         if mobile:
